@@ -1238,6 +1238,7 @@ const char *wifi_get_fw_path(int fw_type)
     ALOGD("Wifi Module checked");
 #endif
     switch (fw_type) {
+    case WIFI_GET_FW_PATH_STA:
 #ifndef XIAOMI_MIONE_WIFI
         return WIFI_DRIVER_FW_PATH_STA;
 #else
