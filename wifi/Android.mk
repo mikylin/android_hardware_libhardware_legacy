@@ -67,7 +67,8 @@ endif
 
 ifeq ($(BOARD_USE_XIAOMI_MIONE_HARDWARE),true)
     LOCAL_CFLAGS += -DXIAOMI_MIONE_WIFI
-    LOCAL_SHARED_LIBRARIES +=  libreadmac
+    LOCAL_SHARED_LIBRARIES += libnv liboncrpc
+    LOCAL_STATIC_LIBRARIES +=  libreadmac
 endif
 
 ifeq ($(BOARD_USE_XIAOMI_MITWO_HARDWARE),true)
