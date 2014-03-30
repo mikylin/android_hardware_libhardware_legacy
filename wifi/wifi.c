@@ -107,6 +107,16 @@ struct genl_family *nl80211;
 #define WIFI_DRIVER_FW_PATH_P2P_DHD    NULL
 #endif
 
+#ifndef WIFI_DRIVER_FW_PATH_STA_DHD
+#define WIFI_DRIVER_FW_PATH_STA_DHD		NULL
+#endif
+#ifndef WIFI_DRIVER_FW_PATH_AP_DHD
+#define WIFI_DRIVER_FW_PATH_AP_DHD		NULL
+#endif
+#ifndef WIFI_DRIVER_FW_PATH_P2P_DHD
+#define WIFI_DRIVER_FW_PATH_P2P_DHD		NULL
+#endif
+
 #ifdef WIFI_EXT_MODULE_NAME
 static const char EXT_MODULE_NAME[] = WIFI_EXT_MODULE_NAME;
 #ifdef WIFI_EXT_MODULE_ARG
@@ -164,12 +174,12 @@ static unsigned char dummy_key[21] = { 0x02, 0x11, 0xbe, 0x33, 0x43, 0x35,
                                        0x68, 0x47, 0x84, 0x99, 0xa9, 0x2b,
                                        0x1c, 0xd3, 0xee, 0xff, 0xf1, 0xe2,
                                        0xf3, 0xf4, 0xf5 };
-
 #ifdef XIAOMI_MIONE_WIFI
 extern char *read_mac();
 static char mac_buf[150];
 static int read_mac_ok;
 #endif
+
 #ifdef XIAOMI_MITWO_WIFI
 extern int qmi_nv_read_wlan_mac(char** mac);
 static unsigned char wlan_addr[] = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, };
@@ -378,14 +388,16 @@ int wifi_load_driver()
         return -1;
     usleep(200000);
 #endif
+
 #ifdef XIAOMI_MIONE_WIFI
     if(is_wifi_module_4330 == 1) {
         if (read_mac_ok == 0) {
             read_wlan_mac();
-        }
-    }
+         }
+     }
     if (insmod(DRIVER_MODULE_PATH, is_wifi_module_4330 ? mac_buf : DRIVER_MODULE_ARG) < 0) {
 #else
+
 #ifdef XIAOMI_MITWO_WIFI
     if (0 == read_mac_ok)
         read_wlan_mac_addr();
@@ -394,6 +406,7 @@ int wifi_load_driver()
     if (insmod(DRIVER_MODULE_PATH, DRIVER_MODULE_ARG) < 0) {
 #endif
 #endif
+
 
 #endif
 
@@ -890,6 +903,12 @@ int wifi_start_supplicant(int p2p_supported)
 #endif
 #endif
 
+#ifdef WIFI_DRIVER_MODULE_PATH
+#ifdef XIAOMI_MIONE_WIFI
+    check_wifi_module();
+#endif
+#endif
+
     if (p2p_supported) {
         strcpy(supplicant_name, P2P_SUPPLICANT_NAME);
         strcpy(supplicant_prop_name, P2P_PROP_NAME);
@@ -1292,14 +1311,15 @@ int wifi_set_mode(int mode) {
 int read_wlan_mac() {
     char *x;
     if(!strcmp(mac_buf,"")) {
-        x=read_mac();
-        sprintf(mac_buf,"%s mac=0x%02x,0x%02x,0x%02x,0x%02x,0x%02x,0x%02x", DRIVER_MODULE_ARG, x[20], x[16], x[12], x[8], x[4], x[0]);
+       x=read_mac();
+       sprintf(mac_buf,"%s mac=0x%02x,0x%02x,0x%02x,0x%02x,0x%02x,0x%02x", DRIVER_MODULE_ARG, x[20], x[16], x[12], x[8], x[4], x[0]);
     }
     ALOGI("Got WLAN MAC Address: %s \ ",mac_buf);
     read_mac_ok = 1;
     return 0;
 }
 #endif
+
 #ifdef XIAOMI_MITWO_WIFI
 /* The Xiaomi MI-Two read mac function */
 int read_wlan_mac_addr()
